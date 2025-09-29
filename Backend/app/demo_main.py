@@ -38,15 +38,19 @@ app.add_middleware(
 )
 
 # Mock data models
+
+
 class User(BaseModel):
     username: str
     role: str
     department: str
 
+
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
     user: User
+
 
 class Document(BaseModel):
     id: int
@@ -65,6 +69,7 @@ class Document(BaseModel):
     sharedWith: Optional[List[str]] = None
     attachmentFilename: Optional[str] = None
     dueDate: Optional[str] = None
+
 
 # Mock database
 mock_users = {
@@ -120,6 +125,8 @@ mock_documents = [
 ]
 
 # Routes
+
+
 @app.get("/")
 async def root():
     return {
@@ -132,6 +139,7 @@ async def root():
         }
     }
 
+
 @app.get("/health")
 async def health_check():
     return {
@@ -143,15 +151,16 @@ async def health_check():
         }
     }
 
+
 @app.post("/api/auth/login")
 async def login(username: str = Form(), password: str = Form()):
     if username not in mock_users:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
+
     user_data = mock_users[username]
     if user_data["password"] != password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
+
     return {
         "success": True,
         "data": {
@@ -165,6 +174,7 @@ async def login(username: str = Form(), password: str = Form()):
         }
     }
 
+
 @app.get("/api/documents/")
 async def get_documents():
     return {
@@ -172,16 +182,18 @@ async def get_documents():
         "data": mock_documents
     }
 
+
 @app.get("/api/documents/{doc_id}")
 async def get_document(doc_id: int):
     doc = next((d for d in mock_documents if d["id"] == doc_id), None)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
-    
+
     return {
         "success": True,
         "data": doc
     }
+
 
 @app.get("/api/dashboard/stats")
 async def get_dashboard_stats():
@@ -195,23 +207,24 @@ async def get_dashboard_stats():
         }
     }
 
+
 @app.post("/api/summarization/summarize")
 async def summarize_text(request: dict):
     text = request.get("text", "")
     language = request.get("language", "english")
     role_context = request.get("role_context")
-    
+
     # Try to use real summarization services if available
     try:
         from app.services.combined_summarization_service import get_combined_summarizer
         combined_service = get_combined_summarizer()
-        
+
         result = await combined_service.auto_summarize(
             text=text,
             role_context=role_context,
             include_analysis=True
         )
-        
+
         return {
             "success": True,
             "data": {
@@ -225,10 +238,12 @@ async def summarize_text(request: dict):
     except Exception as e:
         # Fallback to mock summarization
         if language == "english":
-            summary = {"en": f"Summary: {text[:100]}..." if len(text) > 100 else f"Summary: {text}", "ml": ""}
+            summary = {"en": f"Summary: {text[:100]}..." if len(
+                text) > 100 else f"Summary: {text}", "ml": ""}
         else:
-            summary = {"en": "", "ml": f"സംഗ്രഹം: {text[:50]}..." if len(text) > 50 else f"സംഗ്രഹം: {text}"}
-        
+            summary = {"en": "", "ml": f"സംഗ്രഹം: {text[:50]}..." if len(
+                text) > 50 else f"സംഗ്രഹം: {text}"}
+
         return {
             "success": True,
             "data": {
@@ -240,13 +255,179 @@ async def summarize_text(request: dict):
             }
         }
 
+
 @app.get("/api/documents/search")
 async def search_documents(q: str):
-    filtered = [d for d in mock_documents if q.lower() in d["subject"].lower() or q.lower() in d["body"].lower()]
+    filtered = [d for d in mock_documents if q.lower(
+    ) in d["subject"].lower() or q.lower() in d["body"].lower()]
     return {
         "success": True,
         "data": filtered
     }
+
+# Email processing endpoints
+
+
+@app.get("/api/email/status")
+async def email_service_status():
+    """Check email service status"""
+    return {
+        "success": True,
+        "data": {
+            "email_source": "zodiacmrv@gmail.com",
+            "imap_server": "imap.gmail.com",
+            "smtp_server": "smtp.gmail.com",
+            "connection_status": "ready_to_configure",
+            "configured": False,
+            "message": "Email service available but requires credentials configuration"
+        }
+    }
+
+
+@app.get("/api/email/fetch")
+async def fetch_recent_emails(hours: int = 24, max_emails: int = 50):
+    """Fetch recent emails from zodiacmrv@gmail.com"""
+    # Try to use real email service if available
+    try:
+        from app.services.email_service import get_email_service
+        email_service = get_email_service()
+        emails = await email_service.fetch_recent_emails(hours=hours, max_emails=max_emails)
+
+        return {
+            "success": True,
+            "data": {
+                "emails": emails,
+                "count": len(emails),
+                "hours_back": hours,
+                "message": f"Fetched {len(emails)} emails from the last {hours} hours"
+            }
+        }
+    except Exception as e:
+        # Return mock data if email service is not configured
+        mock_emails = [
+            {
+                "id": "email_1",
+                "subject": "Document Submission - Q3 Safety Report",
+                "sender": "safety.officer@example.com",
+                "date": "2024-07-20T10:30:00",
+                "body": "Please find attached the Q3 safety compliance report. This document requires immediate review by the safety department.",
+                "has_attachments": True,
+                "attachments": [
+                    {
+                        "filename": "Q3_Safety_Report.pdf",
+                        "content_type": "application/pdf",
+                        "size": 524288
+                    }
+                ]
+            },
+            {
+                "id": "email_2",
+                "subject": "Infrastructure Maintenance Schedule",
+                "sender": "operations@kmrl.co.in",
+                "date": "2024-07-19T14:15:00",
+                "body": "Attached is the updated infrastructure maintenance schedule for Q4. Please review and confirm resource allocation.",
+                "has_attachments": True,
+                "attachments": [
+                    {
+                        "filename": "Maintenance_Schedule_Q4.xlsx",
+                        "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "size": 65536
+                    }
+                ]
+            }
+        ]
+
+        return {
+            "success": True,
+            "data": {
+                "emails": mock_emails,
+                "count": len(mock_emails),
+                "hours_back": hours,
+                "message": f"Mock data: {len(mock_emails)} sample emails (Email service requires configuration)",
+                "note": "Configure SMTP_USERNAME and SMTP_PASSWORD in .env for real email fetching"
+            }
+        }
+
+
+@app.post("/api/email/process-to-documents")
+async def process_emails_to_documents(hours: int = 24):
+    """Process emails and convert attachments to documents"""
+    try:
+        from app.services.email_service import get_email_service
+        email_service = get_email_service()
+        result = await email_service.process_emails_to_documents(hours=hours)
+
+        return {
+            "success": True,
+            "data": result
+        }
+    except Exception as e:
+        # Mock processing result
+        return {
+            "success": True,
+            "data": {
+                "emails_processed": 2,
+                "documents_created": 2,
+                "documents": [
+                    {
+                        "id": len(mock_documents) + 1,
+                        "title": "Email: Document Submission - Q3 Safety Report",
+                        "filename": "Q3_Safety_Report.pdf",
+                        "content": "Q3 safety compliance report content extracted...",
+                        "created_at": "2024-07-20T10:30:00"
+                    },
+                    {
+                        "id": len(mock_documents) + 2,
+                        "title": "Email: Infrastructure Maintenance Schedule",
+                        "filename": "Maintenance_Schedule_Q4.xlsx",
+                        "content": "Q4 infrastructure maintenance schedule content...",
+                        "created_at": "2024-07-19T14:15:00"
+                    }
+                ],
+                "message": "Mock data: Created 2 documents from 2 emails (Configure email service for real processing)",
+                "note": "Configure SMTP_USERNAME and SMTP_PASSWORD in .env for real email processing"
+            }
+        }
+
+
+@app.get("/api/email/test-connection")
+async def test_email_connection():
+    """Test email connection"""
+    try:
+        from app.services.email_service import get_email_service
+        email_service = get_email_service()
+        mail = await email_service.connect_imap()
+
+        if mail:
+            mail.close()
+            mail.logout()
+            return {
+                "success": True,
+                "message": "Email connection successful",
+                "data": {
+                    "connected": True,
+                    "email_account": "zodiacmrv@gmail.com"
+                }
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Failed to connect to email server",
+                "data": {
+                    "connected": False,
+                    "error": "IMAP connection failed - check credentials"
+                }
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": "Email connection test failed",
+            "data": {
+                "connected": False,
+                "error": str(e),
+                "note": "Configure SMTP_USERNAME and SMTP_PASSWORD in .env file"
+            }
+        }
 
 if __name__ == "__main__":
     import uvicorn
