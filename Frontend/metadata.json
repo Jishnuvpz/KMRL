@@ -1,0 +1,5 @@
+{
+  "name": " KMRL Document Intelligence finalized ",
+  "description": "A role-based Document Intelligence Dashboard for Kochi Metro Rail Limited (KMRL) that integrates with a simulated email inbox and uses AI for summarization and translation.",
+  "requestFramePermissions": []
+}

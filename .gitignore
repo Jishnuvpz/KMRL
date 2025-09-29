@@ -1,0 +1,69 @@
+# Dependencies
+Frontend/node_modules/
+Backend/.venv/
+Backend/__pycache__/
+Backend/app/__pycache__/
+Backend/app/*/__pycache__/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+Backend/.env
+Frontend/.env
+
+# Build outputs
+Frontend/dist/
+Frontend/build/
+Backend/dist/
+Backend/build/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+Backend/faiss_app.db
+
+# Temporary files
+*.tmp
+*.temp
+*.pyc
+*.pyo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# AWS credentials
+Backend/credentials/
+
+# Large files
+*.zip
+*.tar.gz
+*.rar

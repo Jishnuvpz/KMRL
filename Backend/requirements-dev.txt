@@ -1,0 +1,38 @@
+# Development requirements - simplified for quick start
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Database - SQLite only for development
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+PyJWT==2.8.0
+bcrypt==4.1.2
+
+# Configuration
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# HTTP Requests
+httpx==0.25.2
+requests==2.31.0
+
+# OCR and Document Processing (optional for demo)
+# pytesseract==0.3.10
+# Pillow==10.1.0
+# pdf2image==1.16.3
+# PyPDF2==3.0.1
+
+# File Processing
+aiofiles==23.2.0
+
+# CORS
+fastapi-cors==0.0.6
+
+# Development
+black==23.11.0

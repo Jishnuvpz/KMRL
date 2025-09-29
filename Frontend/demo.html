@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Management System - Demo</title>
+    <link rel="stylesheet" href="demo-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-file-alt"></i>
+                <h1>Document Management System</h1>
+            </div>
+            <nav class="nav">
+                <div id="auth-section">
+                    <!-- Login form will be inserted here -->
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Login Section -->
+            <section id="login-section" class="section">
+                <div class="card">
+                    <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username/Email:</label>
+                            <input type="text" id="username" value="admin@kmrl.co.in" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" value="password123" required>
+                        </div>
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="remember_me">
+                            <label for="remember_me">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section hidden">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="status-item">
+                        <i class="fas fa-server"></i>
+                        <span>Backend: <span id="backend-status">Checking...</span></span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-user"></i>
+                        <span>User: <span id="current-user">Loading...</span></span>
+                    </div>
+                    <div class="status-item">
+                        <button id="logout-btn" class="btn btn-secondary">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="upload">
+                        <i class="fas fa-upload"></i> Upload Documents
+                    </button>
+                    <button class="tab-button" data-tab="documents">
+                        <i class="fas fa-folder"></i> My Documents
+                    </button>
+                    <button class="tab-button" data-tab="search">
+                        <i class="fas fa-search"></i> Semantic Search
+                    </button>
+                    <button class="tab-button" data-tab="analytics">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Upload Tab -->
+                    <div id="upload-tab" class="tab-pane active">
+                        <div class="card">
+                            <h3><i class="fas fa-cloud-upload-alt"></i> Upload Document</h3>
+                            <form id="upload-form" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="file-input">Select File:</label>
+                                    <div class="file-upload-area" id="file-upload-area">
+                                        <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
+                                        <div class="upload-text">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Drag & drop files here or <span>browse</span></p>
+                                            <p class="file-info">Supports: PDF, Word, Text, Images</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="doc-title">Title:</label>
+                                        <input type="text" id="doc-title" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="doc-category">Category:</label>
+                                        <select id="doc-category">
+                                            <option value="uncategorized">Uncategorized</option>
+                                            <option value="invoice">Invoice</option>
+                                            <option value="contract">Contract</option>
+                                            <option value="report">Report</option>
+                                            <option value="email">Email</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="doc-tags">Tags (comma-separated):</label>
+                                    <input type="text" id="doc-tags" placeholder="e.g., important, client, 2024">
+                                </div>
+                                
+                                <div class="form-group checkbox">
+                                    <input type="checkbox" id="enable-semantic" checked>
+                                    <label for="enable-semantic">
+                                        <i class="fas fa-brain"></i> Enable Semantic Search
+                                        <small>Generate AI embeddings for better search</small>
+                                    </label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload"></i> Upload Document
+                                </button>
+                            </form>
+                            
+                            <!-- Upload Progress -->
+                            <div id="upload-progress" class="upload-progress hidden">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <div class="progress-text" id="progress-text">Uploading...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documents Tab -->
+                    <div id="documents-tab" class="tab-pane">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-folder-open"></i> My Documents</h3>
+                                <button id="refresh-docs" class="btn btn-secondary">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                            
+                            <!-- Filters -->
+                            <div class="filters">
+                                <input type="text" id="doc-filter" placeholder="Filter documents...">
+                                <select id="category-filter">
+                                    <option value="">All Categories</option>
+                                    <option value="invoice">Invoice</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="report">Report</option>
+                                    <option value="email">Email</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Documents List -->
+                            <div id="documents-list" class="documents-list">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading documents...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Semantic Search Tab -->
+                    <div id="search-tab" class="tab-pane">
+                        <div class="card">
+                            <h3><i class="fas fa-brain"></i> AI Semantic Search</h3>
+                            <form id="search-form">
+                                <div class="search-input-group">
+                                    <input type="text" id="search-query" placeholder="Search documents using natural language..." required>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                                
+                                <!-- Advanced Options -->
+                                <div class="search-options">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="search-type">Search Type:</label>
+                                            <select id="search-type">
+                                                <option value="hybrid">Hybrid (Document + Chunk)</option>
+                                                <option value="document">Document Level</option>
+                                                <option value="chunk">Chunk Level</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="top-k">Max Results:</label>
+                                            <select id="top-k">
+                                                <option value="5">5</option>
+                                                <option value="10" selected>10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="min-score">Min Similarity:</label>
+                                            <select id="min-score">
+                                                <option value="0.0" selected>Any</option>
+                                                <option value="0.3">30%</option>
+                                                <option value="0.5">50%</option>
+                                                <option value="0.7">70%</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <!-- Search Results -->
+                            <div id="search-results" class="search-results">
+                                <div class="search-placeholder">
+                                    <i class="fas fa-search"></i>
+                                    <p>Enter a search query to find documents using AI semantic search</p>
+                                    <div class="search-examples">
+                                        <h4>Try searching for:</h4>
+                                        <div class="example-queries">
+                                            <span class="example-query">"financial reports from last quarter"</span>
+                                            <span class="example-query">"machine learning research papers"</span>
+                                            <span class="example-query">"client contracts and agreements"</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Tab -->
+                    <div id="analytics-tab" class="tab-pane">
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h4><i class="fas fa-file"></i> Total Documents</h4>
+                                <div class="analytics-value" id="total-docs">-</div>
+                            </div>
+                            <div class="analytics-card">
+                                <h4><i class="fas fa-search"></i> Total Searches</h4>
+                                <div class="analytics-value" id="total-searches">-</div>
+                            </div>
+                            <div class="analytics-card">
+                                <h4><i class="fas fa-clock"></i> Avg Response Time</h4>
+                                <div class="analytics-value" id="avg-response">-</div>
+                            </div>
+                            <div class="analytics-card">
+                                <h4><i class="fas fa-chart-line"></i> System Status</h4>
+                                <div class="analytics-value" id="system-health">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                            <div id="recent-activity" class="activity-list">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading activity...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <script src="demo-script.js"></script>
+</body>
+</html>
