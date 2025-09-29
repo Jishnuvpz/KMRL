@@ -196,21 +196,46 @@ async def get_dashboard_stats():
 async def summarize_text(request: dict):
     text = request.get("text", "")
     language = request.get("language", "english")
+    role_context = request.get("role_context")
     
-    # Mock summarization
-    if language == "english":
-        summary = f"Summary: {text[:100]}..." if len(text) > 100 else f"Summary: {text}"
-    else:
-        summary = f"സംഗ്രഹം: {text[:50]}..." if len(text) > 50 else f"സംഗ്രഹം: {text}"
-    
-    return {
-        "success": True,
-        "data": {
-            "summary": summary,
-            "language": language,
-            "confidence": 0.95
+    # Try to use real summarization services if available
+    try:
+        from app.services.combined_summarization_service import get_combined_summarizer
+        combined_service = get_combined_summarizer()
+        
+        result = await combined_service.auto_summarize(
+            text=text,
+            role_context=role_context,
+            include_analysis=True
+        )
+        
+        return {
+            "success": True,
+            "data": {
+                "summary": result['summary'],
+                "primary_language": result.get('primary_language', language),
+                "confidence": result['confidence'],
+                "model_used": result['model_used'],
+                "is_bilingual": result.get('language_analysis', {}).get('is_bilingual', False)
+            }
         }
-    }
+    except Exception as e:
+        # Fallback to mock summarization
+        if language == "english":
+            summary = {"en": f"Summary: {text[:100]}..." if len(text) > 100 else f"Summary: {text}", "ml": ""}
+        else:
+            summary = {"en": "", "ml": f"സംഗ്രഹം: {text[:50]}..." if len(text) > 50 else f"സംഗ്രഹം: {text}"}
+        
+        return {
+            "success": True,
+            "data": {
+                "summary": summary,
+                "primary_language": language,
+                "confidence": 0.75,
+                "model_used": "fallback",
+                "note": "Using fallback summarization - full AI services not available"
+            }
+        }
 
 @app.get("/api/documents/search")
 async def search_documents(q: str):

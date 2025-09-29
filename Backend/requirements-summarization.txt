@@ -1,0 +1,36 @@
+# Core FastAPI requirements
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+
+# AI/ML Libraries for Summarization Engine
+torch>=1.11.0
+transformers>=4.21.0
+sentencepiece>=0.1.96
+protobuf>=3.20.0
+accelerate>=0.20.0
+
+# Language Detection
+langdetect>=1.0.9
+polyglot>=16.7.4  # Alternative language detection
+
+# Text Processing
+nltk>=3.7
+spacy>=3.4.0
+regex>=2022.7.9
+ftfy>=6.1.1  # Text fixing
+
+# Additional ML utilities
+numpy>=1.21.0
+scipy>=1.9.0
+scikit-learn>=1.1.0
+datasets>=2.0.0  # For model datasets
+
+# Optimization (optional but recommended)
+tokenizers>=0.13.0
+sacremoses>=0.0.53  # For text preprocessing
+
+# Development and logging
+loguru>=0.6.0
+tqdm>=4.64.0  # Progress bars for model loading

@@ -38,11 +38,11 @@ from app.routes import (
     email, 
     cloud, 
     raw_data, 
-    summarization_routes,
     session,
     document_sharing,
     websocket
 )
+from app.routes.summarization_routes import router as summarization_routes
 from app.routes import ocr_routes, semantic_search
 
 # Setup logging
@@ -215,7 +215,7 @@ app.include_router(semantic_search.router, tags=["🔍 FAISS Semantic Search"])
 app.include_router(document_sharing.router, prefix="/api", tags=["🤝 Document Sharing & Collaboration"])
 app.include_router(admin_email.router, prefix="/api/admin", tags=["👨‍💼 Admin Email Configuration"])
 app.include_router(ocr_routes.router, prefix="/api", tags=["👁️ OCR Processing"])
-app.include_router(summarization_routes.router, prefix="/api", tags=["📝 Summarization"])
+app.include_router(summarization_routes, tags=["📝 Summarization"])
 app.include_router(email.router, prefix="/api/email", tags=["📧 Email Processing"])
 app.include_router(cloud.router, prefix="/api/cloud", tags=["☁️ Cloud Services"])
 app.include_router(raw_data.router, prefix="/api/raw-data", tags=["🗄️ Raw Data Storage"])
