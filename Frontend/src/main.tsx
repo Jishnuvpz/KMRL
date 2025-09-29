@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { AuthProvider } from './contexts/AuthContext';
 import App from './App';
 import './index.css';
+import './styles/ingestion-sharing.css';
 
 // Import Font Awesome for icons (if not already included)
 const fontAwesome = document.createElement('link');

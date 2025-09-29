@@ -10,6 +10,8 @@ import Sidebar from './Sidebar';
 import DocumentGrid from './DocumentGrid';
 import FileUpload from './FileUpload';
 import LoadingSpinner from './LoadingSpinner';
+import DocumentIngestion from './DocumentIngestion';
+import InterdepartmentSharing from './InterdepartmentSharing';
 import { DocumentResponse } from '../services/api';
 
 const Dashboard: React.FC = () => {
@@ -19,6 +21,8 @@ const Dashboard: React.FC = () => {
   const [activeDept, setActiveDept] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [showUpload, setShowUpload] = useState(false);
+  const [showIngestion, setShowIngestion] = useState(false);
+  const [showSharing, setShowSharing] = useState(false);
   
   const { data: documents, loading: docsLoading, error: docsError, refetch } = useDocuments();
   const { data: stats, loading: statsLoading } = useDashboardStats();
@@ -53,6 +57,16 @@ const Dashboard: React.FC = () => {
 
   const handleUploadComplete = (newDocument: DocumentResponse) => {
     setShowUpload(false);
+    refetch(); // Refresh documents list
+  };
+
+  const handleIngestionComplete = (newDocument: DocumentResponse) => {
+    setShowIngestion(false);
+    refetch(); // Refresh documents list
+  };
+
+  const handleSharingComplete = () => {
+    setShowSharing(false);
     refetch(); // Refresh documents list
   };
 
@@ -96,21 +110,40 @@ const Dashboard: React.FC = () => {
             </h1>
             
             <div className="content-actions">
-              <button
-                className="btn-primary"
-                onClick={() => setShowUpload(true)}
-              >
-                <i className="fas fa-plus"></i> Upload Document
-              </button>
+              <div className="action-group">
+                <button
+                  className="btn-primary"
+                  onClick={() => setShowUpload(true)}
+                >
+                  <i className="fas fa-plus"></i> Upload Document
+                </button>
+                
+                <button
+                  className="btn-primary"
+                  onClick={() => setShowIngestion(true)}
+                >
+                  <i className="fas fa-file-import"></i> Batch Ingestion
+                </button>
+              </div>
               
-              <button
-                className="btn-secondary"
-                onClick={() => refetch()}
-                disabled={docsLoading}
-              >
-                <i className={`fas fa-sync-alt ${docsLoading ? 'fa-spin' : ''}`}></i>
-                Refresh
-              </button>
+              <div className="action-group">
+                <button
+                  className="btn-secondary"
+                  onClick={() => setShowSharing(true)}
+                  disabled={!documents || documents.length === 0}
+                >
+                  <i className="fas fa-share-alt"></i> Share Documents
+                </button>
+                
+                <button
+                  className="btn-secondary"
+                  onClick={() => refetch()}
+                  disabled={docsLoading}
+                >
+                  <i className={`fas fa-sync-alt ${docsLoading ? 'fa-spin' : ''}`}></i>
+                  Refresh
+                </button>
+              </div>
             </div>
           </div>
 
@@ -171,6 +204,21 @@ const Dashboard: React.FC = () => {
         <FileUpload
           onUploadComplete={handleUploadComplete}
           onClose={() => setShowUpload(false)}
+        />
+      )}
+
+      {showIngestion && (
+        <DocumentIngestion
+          onUploadComplete={handleIngestionComplete}
+          onClose={() => setShowIngestion(false)}
+        />
+      )}
+
+      {showSharing && documents && (
+        <InterdepartmentSharing
+          documents={documents}
+          onClose={() => setShowSharing(false)}
+          onShareComplete={handleSharingComplete}
         />
       )}
     </div>
