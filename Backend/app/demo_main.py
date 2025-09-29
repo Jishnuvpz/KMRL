@@ -18,12 +18,15 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
-# CORS setup
+# CORS setup - Include Render URLs
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://kmrl-frontend.onrender.com",
+    "https://jishnuvpz-kmrl.onrender.com",  # Your potential custom name
+    "https://*.onrender.com",  # Allow all render subdomains
 ]
 
 app.add_middleware(

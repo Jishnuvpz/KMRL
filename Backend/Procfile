@@ -1,0 +1,2 @@
+# Render.com process file for KMRL Backend
+web: python -m uvicorn app.demo_main:app --host 0.0.0.0 --port $PORT
