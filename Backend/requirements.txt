@@ -1,6 +1,6 @@
-# Minimal requirements for quick start demo
+# Minimal requirements compatible with Python 3.13
 fastapi==0.104.1
-uvicorn[standard]==0.24.0
-python-multipart==0.0.6
+uvicorn==0.24.0
+python-multipart==0.0.8
 python-dotenv==1.0.0
 pydantic==2.5.0
