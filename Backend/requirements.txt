@@ -1,6 +1,6 @@
-# Minimal requirements compatible with Python 3.13
+# Minimal requirements compatible with Render.com
 fastapi==0.104.1
 uvicorn==0.24.0
-python-multipart==0.0.8
+python-multipart==0.0.5
 python-dotenv==1.0.0
-pydantic==2.5.0
+pydantic==2.4.2
